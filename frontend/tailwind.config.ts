@@ -14,7 +14,11 @@ const config: Config = {
     }
   },
   darkMode: "class",
-  plugins: []
+  plugins: [],
+  purge: {
+    enabled: true,
+    content: ["./src/**/*.{js,ts,jsx,tsx}"]
+  }
 };
 
 export default config;

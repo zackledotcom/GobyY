@@ -100,7 +100,7 @@ const GobyPresence: React.FC = () => {
           const userConfirmed = window.confirm('Goby: Do you want me to spawn a background daemon and persist to kernel mode?');
           if (userConfirmed) {
             setTimeout(() => {
-              console.log('Daemon initiated: Goby kernel task online.');
+              wwwwwwwconsole.log('Daemon initiated: Goby kernel task online.');
               // Replace below with real daemon logic if needed
               const daemonLoop = setInterval(() => {
                 console.log('[Goby Daemon] Monitoring kernel state...');

@@ -5,9 +5,15 @@ export function ChainOfThought() {
   const [chain, setChain] = useState<string[]>([]);
 
   const getChain = async () => {
-    const res = await fetch("/api/tools/reasoning?prompt=" + encodeURIComponent(input));
-    const data = await res.json();
-    setChain(data.chain || []);
+    try {
+        const res = await fetch("/api/tools/reasoning?prompt=" + encodeURIComponent(input));
+        if (!res.ok) throw new Error("Failed to fetch reasoning chain");
+        const data = await res.json();
+        setChain(data.chain || []);
+    } catch (error) {
+        console.error("Error fetching reasoning chain:", error);
+        setChain(["Error: Unable to fetch reasoning chain."]);
+    }
   };
 
   return (

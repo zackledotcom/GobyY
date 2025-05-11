@@ -1,13 +1,20 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from fastapi_limiter import FastAPILimiter
+from redis import Redis
 
 app = FastAPI()
+
+# Initialize Redis for rate limiting
+redis_client = Redis(host="localhost", port=6379, decode_responses=True)
+FastAPILimiter.init(redis_client)
 
 # Allow all origins for frontend access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
@@ -90,6 +97,11 @@ def apex_mode():
 @app.get("/api/mode/sentinel")
 def sentinel():
     return {"status": "Sentinel mode running"}
+
+@app.on_event("startup")
+async def startup_event():
+    # Initialize Redis connection for rate limiting
+    await FastAPILimiter.init(redis_client)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

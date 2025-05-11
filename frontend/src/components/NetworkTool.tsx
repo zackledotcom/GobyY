@@ -3,15 +3,25 @@ import React, { useState } from 'react';
 const NetworkTool: React.FC = () => {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
-  const runScan = () => {
+  const runScan = async () => {
     setScanning(true);
-    setResult(''); // clear previous result
-    // Simulate a network scan with a timeout
-    setTimeout(() => {
-      setResult('Scan complete. No issues found.');
+    setResult('');
+    setError(null);
+
+    try {
+      const response = await fetch('/api/scan');
+      if (!response.ok) {
+        throw new Error(`Scan failed: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setResult(data.message || 'Scan complete. No issues found.');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setScanning(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -26,6 +36,11 @@ const NetworkTool: React.FC = () => {
       {result && (
         <div className="mt-3 p-3 bg-gray-200 dark:bg-gray-800 rounded">
           <pre>{result}</pre>
+        </div>
+      )}
+      {error && (
+        <div className="mt-3 p-3 bg-red-200 dark:bg-red-800 text-red-900 dark:text-red-100 rounded">
+          <pre>Error: {error}</pre>
         </div>
       )}
     </div>
